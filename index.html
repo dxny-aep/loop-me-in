@@ -21,7 +21,8 @@
   <meta name="twitter:image" content="https://loop-me-in.vercel.app/og-img.jpeg">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline&family=Styrene+B:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=overused-grotesk@300,400,500,600,700&display=swap" rel="stylesheet">
   <style>
     :root {
       /* Claude Design System Palette */
@@ -40,11 +41,11 @@
       --border-default: #D4D0C5;
       --border-strong: #1A1A1A;
 
-      /* Claude Coral/Terracotta */
-      --accent-primary: #C15F3C;
-      --accent-hover: #A94D2D;
-      --accent-light: #F5E4DC;
-      --accent-lighter: #FAEFE8;
+      /* Lilac Accent */
+      --accent-primary: #7C5CBF;
+      --accent-hover: #6347A8;
+      --accent-light: #EDE8F7;
+      --accent-lighter: #EDE8F7;
 
       /* Amber */
       --amber: #D4A574;
@@ -57,7 +58,7 @@
       --shadow-sm: 0 2px 8px rgba(26, 26, 26, 0.06);
       --shadow-md: 0 8px 24px rgba(26, 26, 26, 0.08);
       --shadow-lg: 0 12px 40px rgba(26, 26, 26, 0.12);
-      --shadow-accent: 0 6px 20px rgba(193, 95, 60, 0.25);
+      --shadow-accent: 0 6px 20px rgba(124, 92, 191, 0.25);
 
       --radius-sm: 6px;
       --radius-md: 10px;
@@ -78,7 +79,7 @@
     }
 
     body {
-      font-family: 'Styrene B', 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Overused Grotesk', -apple-system, 'Segoe UI', sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
@@ -91,8 +92,8 @@
       position: fixed;
       inset: 0;
       background-image:
-        radial-gradient(circle at 20% 10%, rgba(193, 95, 60, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(212, 165, 116, 0.03) 0%, transparent 50%);
+        radial-gradient(circle at 20% 10%, rgba(124, 92, 191, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(124, 92, 191, 0.02) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
     }
@@ -121,10 +122,10 @@
     }
 
     .brand h1 {
-      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-family: 'Instrument Serif', Georgia, serif;
       font-size: 1.85rem;
       font-weight: 400;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       color: var(--text-primary);
       line-height: 1;
     }
@@ -169,7 +170,7 @@
     }
 
     .nav-month {
-      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-family: 'Instrument Serif', Georgia, serif;
       font-size: 1rem;
       font-weight: 400;
       color: var(--text-primary);
@@ -606,19 +607,19 @@
     }
 
     .event-image-placeholder {
-      font-family: 'Tiempos Headline', Georgia, serif;
+      font-family: 'Instrument Serif', Georgia, serif;
       font-size: 3rem;
       color: var(--accent-primary);
       opacity: 0.3;
     }
 
     .detail-title {
-      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-family: 'Instrument Serif', Georgia, serif;
       font-size: 1.625rem;
       font-weight: 400;
       color: var(--text-primary);
       line-height: 1.2;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       margin-bottom: 1rem;
     }
 
@@ -883,6 +884,19 @@
 
     .btn-link:hover {
       color: var(--accent-primary);
+    }
+
+    /* ═══════════ TYPE SCALE UTILITIES ═══════════ */
+    .text-lg {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .text-xl {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.03em;
     }
 
     /* ═══════════ ANIMATIONS ═══════════ */
