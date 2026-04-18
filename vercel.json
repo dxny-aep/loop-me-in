@@ -5,32 +5,20 @@
     "ANTHROPIC_API_KEY",
     "EVENTBRITE_API_KEY"
   ],
-  "builds": [
-    {
-      "src": "serve.js",
-      "use": "@vercel/node"
+  "functions": {
+    "serve.js": {
+      "maxDuration": 60,
+      "memory": 1024
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "serve.js"
+      "source": "/api/:path*",
+      "destination": "/serve.js"
     },
     {
-      "src": "/data/(.*)",
-      "dest": "data/$1"
-    },
-    {
-      "src": "/(.*\\.html)$",
-      "dest": "$1"
-    },
-    {
-      "src": "/(.*\\.json)$",
-      "dest": "$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dashboard-with-refresh.html"
+      "source": "/:path*",
+      "destination": "/dashboard-with-refresh.html"
     }
   ]
 }
