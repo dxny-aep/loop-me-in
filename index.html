@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loop Me In · Your event agent</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline&family=Styrene+B:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Claude Design System Palette */
+      --bg-primary: #F2F0E8;
+      --bg-surface: #FBFAF4;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #EDEBE3;
+      --bg-hover: #E8E6DE;
+
+      --text-primary: #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-tertiary: #8B8680;
+      --text-muted: #B5B0A8;
+
+      --border-subtle: #E4E1D7;
+      --border-default: #D4D0C5;
+      --border-strong: #1A1A1A;
+
+      /* Claude Coral/Terracotta */
+      --accent-primary: #C15F3C;
+      --accent-hover: #A94D2D;
+      --accent-light: #F5E4DC;
+      --accent-lighter: #FAEFE8;
+
+      /* Amber */
+      --amber: #D4A574;
+      --amber-light: #F2E5D0;
+
+      /* Neutrals */
+      --neutral-low: #D9D6CC;
+
+      --shadow-xs: 0 1px 2px rgba(26, 26, 26, 0.04);
+      --shadow-sm: 0 2px 8px rgba(26, 26, 26, 0.06);
+      --shadow-md: 0 8px 24px rgba(26, 26, 26, 0.08);
+      --shadow-lg: 0 12px 40px rgba(26, 26, 26, 0.12);
+      --shadow-accent: 0 6px 20px rgba(193, 95, 60, 0.25);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --radius-pill: 999px;
+
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Styrene B', 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 10%, rgba(193, 95, 60, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 165, 116, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ═══════════ HEADER ═══════════ */
+    .header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .brand h1 {
+      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-size: 1.85rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+
+    .brand-sub::before {
+      content: '·';
+      margin-right: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.5rem 0.875rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s var(--ease);
+      letter-spacing: -0.005em;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .nav-month {
+      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      padding: 0 0.75rem;
+      min-width: 110px;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .signup-stats {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .signup-stats .divider {
+      color: var(--text-muted);
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .stat-check {
+      color: var(--accent-primary);
+      font-weight: 700;
+    }
+
+    .stat-circle {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-tertiary);
+      display: inline-block;
+    }
+
+    /* ═══════════ LEGEND ROW ═══════════ */
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      margin-bottom: 1.5rem;
+      padding: 0 0.25rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-high { background: var(--accent-primary); }
+    .legend-medium { background: var(--amber); }
+    .legend-low { background: var(--neutral-low); }
+
+    /* ═══════════ REFRESH BUTTON ═══════════ */
+    .refresh-btn {
+      background: var(--text-primary);
+      color: var(--bg-surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 0.625rem 1.125rem;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s var(--ease);
+      letter-spacing: -0.005em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .refresh-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .refresh-btn span, .refresh-btn svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    .refresh-btn:hover:not(:disabled)::before {
+      opacity: 1;
+    }
+
+    .refresh-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .refresh-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .refresh-btn:disabled {
+      cursor: wait;
+      background: var(--accent-primary);
+    }
+
+    .refresh-icon {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .refresh-btn:hover:not(:disabled) .refresh-icon {
+      transform: rotate(180deg);
+    }
+
+    .refresh-btn.loading .refresh-icon {
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ═══════════ STATUS TOAST ═══════════ */
+    .status-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      z-index: 100;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s var(--ease);
+      min-width: 280px;
+    }
+
+    .status-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .status-toast.loading {
+      border-left: 3px solid var(--accent-primary);
+    }
+
+    .status-toast.success {
+      border-left: 3px solid #4CAF50;
+    }
+
+    .status-toast.error {
+      border-left: 3px solid #C62828;
+    }
+
+    .status-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-subtle);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ═══════════ MAIN GRID ═══════════ */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* ═══════════ CALENDAR ═══════════ */
+    .calendar-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-xs);
+      transition: box-shadow 0.3s var(--ease);
+    }
+
+    .calendar-card:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 0.75rem;
+      padding: 0 0.25rem;
+    }
+
+    .weekday {
+      text-align: left;
+      padding: 0.5rem 0.625rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: minmax(108px, auto);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--border-subtle);
+      gap: 1px;
+    }
+
+    .day-cell {
+      background: var(--bg-surface);
+      padding: 0.625rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: background 0.2s var(--ease);
+      cursor: default;
+    }
+
+    .day-cell:hover {
+      background: var(--bg-card);
+    }
+
+    .day-cell.other-month {
+      background: var(--bg-subtle);
+    }
+
+    .day-cell.other-month .day-num {
+      color: var(--text-muted);
+    }
+
+    .day-num {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.375rem;
+      letter-spacing: -0.01em;
+    }
+
+    .day-cell.today .day-num {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .day-events {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .event-chip {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: all 0.2s var(--ease);
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      letter-spacing: -0.005em;
+      line-height: 1.3;
+    }
+
+    .event-chip::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .event-chip.high {
+      background: var(--accent-light);
+      color: var(--accent-hover);
+    }
+    .event-chip.high::before {
+      background: var(--accent-primary);
+    }
+
+    .event-chip.medium {
+      background: var(--amber-light);
+      color: #8B6138;
+    }
+    .event-chip.medium::before {
+      background: var(--amber);
+    }
+
+    .event-chip.low {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+    }
+    .event-chip.low::before {
+      background: var(--neutral-low);
+    }
+
+    .event-chip:hover {
+      transform: translateX(2px);
+      filter: brightness(0.98);
+    }
+
+    .event-chip.selected {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-lighter);
+    }
+
+    .today-indicator {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 22px;
+      height: 22px;
+      background: var(--accent-primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(193, 95, 60, 0.35);
+    }
+
+    /* ═══════════ DETAIL PANEL ═══════════ */
+    .detail-panel {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-xs);
+      transition: box-shadow 0.3s var(--ease);
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+
+    .detail-panel:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .detail-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .detail-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .detail-panel::-webkit-scrollbar-thumb {
+      background: var(--border-default);
+      border-radius: 3px;
+    }
+
+    .detail-empty {
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 0.9375rem;
+    }
+
+    .detail-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .event-image {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-light), var(--amber-light));
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .event-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .event-image-placeholder {
+      font-family: 'Tiempos Headline', Georgia, serif;
+      font-size: 3rem;
+      color: var(--accent-primary);
+      opacity: 0.3;
+    }
+
+    .detail-title {
+      font-family: 'Tiempos Headline', 'Merriweather', Georgia, serif;
+      font-size: 1.625rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .detail-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.3125rem 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      transition: all 0.2s var(--ease);
+    }
+
+    .badge-high {
+      background: var(--accent-light);
+      color: var(--accent-hover);
+    }
+
+    .badge-medium {
+      background: var(--amber-light);
+      color: #8B6138;
+    }
+
+    .badge-low {
+      background: var(--bg-subtle);
+      color: var(--text-tertiary);
+    }
+
+    .badge-outline {
+      background: transparent;
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-default);
+    }
+
+    .badge-outline::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-tertiary);
+    }
+
+    .badge-signed {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .badge-signed::before {
+      content: '✓';
+    }
+
+    /* ═══════════ CLAUDE'S TAKE ═══════════ */
+    .claude-take {
+      background: var(--accent-lighter);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.125rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .claude-take::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent-primary);
+    }
+
+    .claude-take-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.375rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .claude-take-text {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-style: italic;
+      letter-spacing: -0.005em;
+    }
+
+    /* ═══════════ META TABLE ═══════════ */
+    .meta-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.25rem 0;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+    }
+
+    .meta-row:last-child {
+      border-bottom: none;
+    }
+
+    .meta-label {
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .meta-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      text-align: right;
+      letter-spacing: -0.005em;
+    }
+
+    .meta-value.highlight {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .meta-value a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      transition: color 0.2s var(--ease);
+    }
+
+    .meta-value a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.005em;
+    }
+
+    /* ═══════════ ACTIONS ═══════════ */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+
+    .btn {
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.25s var(--ease);
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      letter-spacing: -0.005em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #fff;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent-hover);
+      opacity: 0;
+      transition: opacity 0.25s var(--ease);
+    }
+
+    .btn-primary > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-default);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-tertiary);
+    }
+
+    .btn-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.25rem 0;
+    }
+
+    .btn-divider::before,
+    .btn-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    .btn-divider span {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .btn-link {
+      background: transparent;
+      color: var(--text-tertiary);
+      font-size: 0.8125rem;
+      padding: 0.5rem;
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
+
+    .btn-link:hover {
+      color: var(--accent-primary);
+    }
+
+    /* ═══════════ ANIMATIONS ═══════════ */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s var(--ease);
+    }
+
+    /* ═══════════ RESPONSIVE ═══════════ */
+    @media (max-width: 1100px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-panel {
+        position: static;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const { useState, useEffect, useMemo } = React;
+    const e = React.createElement;
+
+    // ═══════════ ICAL HELPERS ═══════════
+    function formatICalDateTime(date) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}Z`;
+    }
+
+    function escapeICalText(text) {
+      if (!text) return '';
+      return text.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    }
+
+    function generateSingleEventICS(event) {
+      const eventDate = new Date(event.date);
+      const [hours, minutes] = (event.time || '14:00').split(':');
+      eventDate.setHours(parseInt(hours), parseInt(minutes), 0);
+      const endDate = new Date(eventDate.getTime() + 60 * 60 * 1000);
+      return [
+        'BEGIN:VCALENDAR', 'VERSION:2.0',
+        'PRODID:-//Loop Me In//Event Discovery//EN',
+        'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${event.id}@loopmein.local`,
+        `DTSTAMP:${formatICalDateTime(new Date())}`,
+        `DTSTART:${formatICalDateTime(eventDate)}`,
+        `DTEND:${formatICalDateTime(endDate)}`,
+        `SUMMARY:${escapeICalText(event.title)}`,
+        `DESCRIPTION:${escapeICalText(event.description || '')}\\n\\nLink: ${event.link}`,
+        `LOCATION:${escapeICalText(event.location || '')}`,
+        'BEGIN:VALARM', 'TRIGGER:-PT24H', 'ACTION:DISPLAY',
+        `DESCRIPTION:${escapeICalText(event.title)}`,
+        'END:VALARM', 'END:VEVENT', 'END:VCALENDAR',
+      ].join('\r\n');
+    }
+
+    function downloadICS(icsContent, eventTitle) {
+      const blob = new Blob([icsContent], { type: 'text/calendar' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${eventTitle.replace(/\s+/g, '-').toLowerCase().substring(0, 30)}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+
+    function getRelevance(score) {
+      if (score >= 9) return { level: 'high', label: 'HIGH' };
+      if (score >= 7) return { level: 'medium', label: 'MEDIUM' };
+      return { level: 'low', label: 'LOW' };
+    }
+
+    function RefreshIcon() {
+      return e('svg', {
+        className: 'refresh-icon',
+        viewBox: '0 0 24 24',
+        xmlns: 'http://www.w3.org/2000/svg'
+      },
+        e('path', {
+          d: 'M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9c2.39 0 4.68.94 6.4 2.6L21 8',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round'
+        }),
+        e('polyline', {
+          points: '21 3 21 8 16 8',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round'
+        })
+      );
+    }
+
+    // ═══════════ APP ═══════════
+    function App() {
+      const [events, setEvents] = useState([]);
+      const [selectedId, setSelectedId] = useState(null);
+      const [currentMonth, setCurrentMonth] = useState(new Date(2026, 3, 1));
+      const [isRefreshing, setIsRefreshing] = useState(false);
+      const [toast, setToast] = useState(null);
+      const [signedUpIds, setSignedUpIds] = useState(new Set());
+
+      useEffect(() => { loadEvents(); }, []);
+
+      const loadEvents = () => {
+        fetch('./data/events.json?t=' + Date.now())
+          .then(r => r.json())
+          .then(data => {
+            const parsed = (data.events || []).map(e => ({ ...e, date: new Date(e.date) }));
+            setEvents(parsed);
+            if (parsed.length > 0 && !selectedId) setSelectedId(parsed[0].id);
+          })
+          .catch(console.error);
+      };
+
+      const selectedEvent = useMemo(
+        () => events.find(e => e.id === selectedId),
+        [events, selectedId]
+      );
+
+      const handleRefresh = async () => {
+        setIsRefreshing(true);
+        setToast({ type: 'loading', text: 'Fetching events from sources...' });
+
+        try {
+          const res = await fetch('./api/refresh-events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const data = await res.json();
+
+          if (!res.ok || data.success === false) {
+            throw new Error(data.error || 'Refresh failed');
+          }
+
+          setToast({
+            type: 'success',
+            text: `✓ Found ${data.totalSaved} events · ${data.newCount} new`
+          });
+
+          setTimeout(() => { loadEvents(); }, 500);
+          setTimeout(() => setToast(null), 3000);
+        } catch (err) {
+          setToast({ type: 'error', text: `✗ ${err.message}` });
+          setTimeout(() => setToast(null), 4000);
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+
+      const toggleSignup = (id) => {
+        setSignedUpIds(prev => {
+          const next = new Set(prev);
+          if (next.has(id)) next.delete(id); else next.add(id);
+          return next;
+        });
+      };
+
+      // Calendar logic
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayOfWeek = new Date(year, month, 1).getDay();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+      const eventsByDay = useMemo(() => {
+        const map = new Map();
+        events.forEach(ev => {
+          const d = new Date(ev.date);
+          if (d.getFullYear() === year && d.getMonth() === month) {
+            const day = d.getDate();
+            if (!map.has(day)) map.set(day, []);
+            map.get(day).push(ev);
+          }
+        });
+        return map;
+      }, [events, year, month]);
+
+      const today = new Date();
+      const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+      // Build 42-cell grid
+      const cells = [];
+      for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+        cells.push({ day: daysInPrevMonth - i, otherMonth: true });
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        cells.push({ day: d, otherMonth: false });
+      }
+      while (cells.length < 42) {
+        cells.push({ day: cells.length - daysInMonth - firstDayOfWeek + 1, otherMonth: true });
+      }
+
+      const rel = selectedEvent ? getRelevance(selectedEvent.relevanceScore) : null;
+      const signedUp = selectedEvent && signedUpIds.has(selectedEvent.id);
+
+      const signedUpCount = signedUpIds.size;
+      const pendingCount = events.filter(ev => !signedUpIds.has(ev.id) && getRelevance(ev.relevanceScore).level === 'high').length;
+
+      return e('div', { className: 'app' },
+        // ═══ HEADER ═══
+        e('div', { className: 'header' },
+          e('div', { className: 'brand' },
+            e('h1', null, 'Loop Me In'),
+            e('span', { className: 'brand-sub' }, 'Your event agent')
+          ),
+          e('div', { className: 'header-center' },
+            e('button', {
+              className: 'nav-btn',
+              onClick: () => setCurrentMonth(new Date(year, month - 1, 1))
+            }, '← Prev'),
+            e('span', { className: 'nav-month' },
+              currentMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            ),
+            e('button', {
+              className: 'nav-btn',
+              onClick: () => setCurrentMonth(new Date(year, month + 1, 1))
+            }, 'Next →'),
+            e('button', {
+              className: 'nav-btn',
+              onClick: () => setCurrentMonth(new Date())
+            }, 'Today')
+          ),
+          e('div', { className: 'header-right' },
+            e('div', { className: 'signup-stats' },
+              e('span', { className: 'stat' },
+                e('span', { className: 'stat-check' }, '✓'),
+                `${signedUpCount} Signed up`
+              ),
+              e('span', { className: 'divider' }, '·'),
+              e('span', { className: 'stat' },
+                e('span', { className: 'stat-circle' }),
+                `${pendingCount} Pending`
+              )
+            ),
+            e('button', {
+              className: `refresh-btn ${isRefreshing ? 'loading' : ''}`,
+              onClick: handleRefresh,
+              disabled: isRefreshing
+            },
+              e(RefreshIcon),
+              e('span', null, isRefreshing ? 'Refreshing…' : 'Refresh')
+            )
+          )
+        ),
+
+        // ═══ LEGEND ═══
+        e('div', { className: 'legend-row' },
+          e('div', { className: 'legend-item' },
+            e('span', { className: 'legend-dot legend-high' }), 'High relevance'
+          ),
+          e('div', { className: 'legend-item' },
+            e('span', { className: 'legend-dot legend-medium' }), 'Medium'
+          ),
+          e('div', { className: 'legend-item' },
+            e('span', { className: 'legend-dot legend-low' }), 'Low'
+          )
+        ),
+
+        // ═══ MAIN GRID ═══
+        e('div', { className: 'main-grid' },
+          // CALENDAR
+          e('div', { className: 'calendar-card' },
+            e('div', { className: 'weekdays' },
+              ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d =>
+                e('div', { key: d, className: 'weekday' }, d)
+              )
+            ),
+            e('div', { className: 'days-grid' },
+              cells.map((cell, i) => {
+                const dayEvents = !cell.otherMonth ? (eventsByDay.get(cell.day) || []) : [];
+                const isToday = isCurrentMonth && !cell.otherMonth && cell.day === today.getDate();
+
+                return e('div', {
+                  key: i,
+                  className: `day-cell ${cell.otherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}`
+                },
+                  e('span', { className: 'day-num' }, cell.day),
+                  isToday && e('span', { className: 'today-indicator' }, today.getDate()),
+                  e('div', { className: 'day-events' },
+                    dayEvents.slice(0, 3).map(ev => {
+                      const r = getRelevance(ev.relevanceScore);
+                      const isSelected = selectedId === ev.id;
+                      return e('div', {
+                        key: ev.id,
+                        className: `event-chip ${r.level} ${isSelected ? 'selected' : ''}`,
+                        onClick: () => setSelectedId(ev.id),
+                        title: ev.title
+                      }, ev.title.length > 18 ? ev.title.substring(0, 16) + '…' : ev.title);
+                    })
+                  )
+                );
+              })
+            )
+          ),
+
+          // DETAIL PANEL
+          e('div', { className: 'detail-panel' },
+            !selectedEvent
+              ? e('div', { className: 'detail-empty' }, 'Select an event to see details')
+              : e('div', { className: 'fade-in', key: selectedEvent.id },
+                  e('div', { className: 'detail-label' }, 'Event Details'),
+
+                  // Event image
+                  selectedEvent.imageUrl
+                    ? e('div', { className: 'event-image' },
+                        e('img', { src: selectedEvent.imageUrl, alt: selectedEvent.title })
+                      )
+                    : e('div', { className: 'event-image' },
+                        e('span', { className: 'event-image-placeholder' }, selectedEvent.title.charAt(0))
+                      ),
+
+                  e('h2', { className: 'detail-title' }, selectedEvent.title),
+
+                  e('div', { className: 'detail-badges' },
+                    e('span', { className: `badge badge-${rel.level}` },
+                      `${rel.label} · ${selectedEvent.relevanceScore}/10`
+                    ),
+                    signedUp
+                      ? e('span', { className: 'badge badge-signed' }, 'SIGNED UP')
+                      : e('span', { className: 'badge badge-outline' }, 'YET TO SIGN UP')
+                  ),
+
+                  // Claude's Take
+                  selectedEvent.relevanceReason && e('div', { className: 'claude-take' },
+                    e('div', { className: 'claude-take-label' }, "Claude's Take"),
+                    e('div', { className: 'claude-take-text' }, selectedEvent.relevanceReason)
+                  ),
+
+                  // Meta card
+                  e('div', { className: 'meta-card' },
+                    e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Date'),
+                      e('span', { className: 'meta-value' },
+                        new Date(selectedEvent.date).toLocaleDateString('en-US', {
+                          weekday: 'short', month: 'short', day: 'numeric'
+                        }) + ` · ${selectedEvent.time || '14:00'}`
+                      )
+                    ),
+                    e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Platform'),
+                      e('span', { className: 'meta-value' },
+                        selectedEvent.platform.charAt(0).toUpperCase() + selectedEvent.platform.slice(1)
+                      )
+                    ),
+                    e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Location'),
+                      e('span', { className: 'meta-value' }, selectedEvent.location || 'TBD')
+                    ),
+                    selectedEvent.host && e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Host'),
+                      e('span', { className: 'meta-value highlight' }, selectedEvent.host)
+                    ),
+                    selectedEvent.attendees && e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Attendees'),
+                      e('span', { className: 'meta-value' }, selectedEvent.attendees)
+                    ),
+                    e('div', { className: 'meta-row' },
+                      e('span', { className: 'meta-label' }, 'Event link'),
+                      e('span', { className: 'meta-value' },
+                        e('a', {
+                          href: selectedEvent.link, target: '_blank', rel: 'noopener noreferrer'
+                        }, selectedEvent.link.replace(/^https?:\/\//, '').substring(0, 20) + ' →')
+                      )
+                    )
+                  ),
+
+                  e('p', { className: 'description' }, selectedEvent.description),
+
+                  // Actions
+                  e('div', { className: 'actions' },
+                    e('button', {
+                      className: 'btn btn-primary',
+                      onClick: () => {
+                        toggleSignup(selectedEvent.id);
+                        window.open(selectedEvent.link, '_blank');
+                      }
+                    },
+                      e('span', null, '✨'),
+                      e('span', null, signedUp ? 'Registered ✓' : 'Sign up (AI-assisted)')
+                    ),
+                    e('button', {
+                      className: 'btn btn-secondary',
+                      onClick: () => window.open(selectedEvent.link, '_blank')
+                    },
+                      e('span', null, '🔗'),
+                      e('span', null, 'Sign up manually →')
+                    ),
+
+                    e('div', { className: 'btn-divider' },
+                      e('span', null, 'OR')
+                    ),
+
+                    e('button', {
+                      className: 'btn btn-secondary',
+                      onClick: () => {
+                        const ics = generateSingleEventICS(selectedEvent);
+                        downloadICS(ics, selectedEvent.title);
+                      }
+                    },
+                      e('span', null, '📅'),
+                      e('span', null, 'Add to Calendar (.ics)')
+                    ),
+
+                    e('button', { className: 'btn btn-link' },
+                      e('span', null, '☆ Save for later')
+                    )
+                  )
+                )
+          )
+        ),
+
+        // TOAST
+        toast && e('div', {
+          className: `status-toast show ${toast.type}`
+        },
+          toast.type === 'loading' && e('div', { className: 'status-spinner' }),
+          e('span', null, toast.text)
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(e(App));
+  </script>
+</body>
+</html>
