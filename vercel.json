@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "name": "loop-me-in",
+  "env": [
+    "ANTHROPIC_API_KEY",
+    "EVENTBRITE_API_KEY"
+  ],
+  "builds": [
+    {
+      "src": "serve.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "serve.js"
+    },
+    {
+      "src": "/data/(.*)",
+      "dest": "data/$1"
+    },
+    {
+      "src": "/(.*\\.html)$",
+      "dest": "$1"
+    },
+    {
+      "src": "/(.*\\.json)$",
+      "dest": "$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dashboard-with-refresh.html"
+    }
+  ]
+}
